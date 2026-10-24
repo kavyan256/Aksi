@@ -1,4 +1,4 @@
-# ShowMe server. Works on Hugging Face Spaces (port 7860) and Render (sets $PORT).
+# Aksi server. Works on Hugging Face Spaces (port 7860) and Render (sets $PORT).
 FROM python:3.11-slim
 
 WORKDIR /app

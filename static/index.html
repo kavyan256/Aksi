@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#FFE600">
-<title>ShowMe</title>
+<title>Aksi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Noto+Sans+Devanagari:wght@800&family=Noto+Sans+Telugu:wght@800&family=Noto+Sans+Tamil:wght@800&family=Noto+Sans+Kannada:wght@800&family=Noto+Sans+Malayalam:wght@800&family=Noto+Sans+Bengali:wght@800&family=Noto+Sans+Gujarati:wght@800&family=Noto+Sans+Gurmukhi:wght@800&family=Noto+Sans+Oriya:wght@800&display=swap">
 <style>
@@ -63,8 +63,9 @@
   .sl1 { font-size: min(26px, 6.5vw); font-weight: 800; }
   .sl2 { font-size: 17px; font-weight: 800; }
 
-  .logo { font-size: min(132px, 33vw); font-weight: 900; line-height: .86; letter-spacing: -.045em;
-    white-space: pre-line; margin: 40px 0 0 -4px; }
+  .logo-wrap { margin-top: 40px; }
+  .logo { font-size: min(132px, 30vw); font-weight: 900; line-height: .86; letter-spacing: -.045em; margin-left: -4px; }
+  .logo-sub { margin-top: 10px; font-size: min(28px, 7vw); font-weight: 800; letter-spacing: .04em; }
   .group { display: flex; flex-direction: column; gap: 14px; }
   .rule { height: 14px; background: #000; }
   .note { font-size: 17px; font-weight: 800; line-height: 1.4; }
@@ -152,12 +153,12 @@ let lastAudio = null, busy = false, ctx = null, tickTimer = null, lastPointer = 
 
 // ---- Language memory (per phone). Storage can be blocked, so never rely on it.
 let userLang = null;
-try { userLang = localStorage.getItem('showme-lang'); } catch {}
+try { userLang = localStorage.getItem('aksi-lang'); } catch {}
 if (!T[userLang] && userLang !== 'en-IN') userLang = null;
 function setLang(l) {
   if (!T[l] && l !== 'en-IN') return;
   userLang = l;
-  try { localStorage.setItem('showme-lang', l); } catch {}
+  try { localStorage.setItem('aksi-lang', l); } catch {}
   if (stream) preloadErrorClip(l); // new language: fetch its error clip while we're online
 }
 // The extra line on top: only when the user's language isn't already Hindi or English
@@ -204,7 +205,9 @@ const screens = {
     g.append(el('div', 'rule'),
       stack([{ text: 'छूकर शुरू करें', lang: 'hi-IN' }, { text: 'TAP ANYWHERE TO START', lang: 'en-IN' }]),
       el('div', 'note', 'पहली बार छूने पर कैमरा और माइक की अनुमति माँगी जाएगी · Asks for camera + mic', 'hi-IN'));
-    return [el('div', 'logo', 'SHOW\nME', 'en-IN'), g];
+    const logo = el('div', 'logo-wrap');
+    logo.append(el('div', 'logo', 'AKSI', 'en-IN'), el('div', 'logo-sub', 'अक्षि · EYE', 'hi-IN'));
+    return [logo, g];
   },
   ready: () => {
     const s = el('div', 'slab');

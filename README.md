@@ -1,5 +1,5 @@
 ---
-title: ShowMe
+title: Aksi
 emoji: 👁️
 colorFrom: yellow
 colorTo: red
@@ -8,7 +8,7 @@ app_port: 7860
 pinned: false
 ---
 
-# ShowMe
+# Aksi (अक्षि)
 
 Point your phone camera, hold the screen, ask in your own language, and hear the answer.
 Built for visually impaired people, entirely on Sarvam AI:

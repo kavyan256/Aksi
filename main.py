@@ -1,4 +1,4 @@
-"""ShowMe server: voice question + photo in, spoken answer out. All three steps use Sarvam."""
+"""Aksi server: voice question + photo in, spoken answer out. All three steps use Sarvam."""
 
 import base64
 import os
@@ -42,7 +42,7 @@ Rules:
 - If the photo is blurry, dark, or does not show what they asked about, say so and tell them how to move the camera (up, down, left, right, closer, back).
 - Never guess. If unsure, say you are not sure."""
 
-app = FastAPI(title="ShowMe")
+app = FastAPI(title="Aksi")
 client = httpx.AsyncClient(timeout=30)
 # Pre-recorded error clips made by make_sounds.py
 app.mount("/sounds", StaticFiles(directory="static/sounds"), name="sounds")
