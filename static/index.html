@@ -17,14 +17,17 @@
       'Noto Sans Malayalam', 'Noto Sans Bengali', 'Noto Sans Gujarati', 'Noto Sans Gurmukhi', 'Noto Sans Oriya',
       system-ui, sans-serif; }
   body { background: #000; color: #fff; }
-  body[data-state=start], body[data-state=looking] { background: #FFE600; color: #000; }
-  body[data-state=listening] { background: #FF3B30; color: #000; }
-  body[data-state=answer] { background: #fff; color: #000; }
-  body[data-state=error] { background: repeating-linear-gradient(-45deg, #FFE600 0 36px, #000 36px 72px); }
+  body[data-state=start], body[data-state=looking] { color: #000; }
+  body[data-state=listening], body[data-state=answer] { color: #000; }
 
-  /* The feed must keep playing (we snap the photo from it), so hide it with opacity, not display */
-  video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
-  body[data-state=ready] video { opacity: 1; }
+  /* The camera feed is ALWAYS painted: if it is hidden, Chrome may stop updating its frames and
+     the photo comes out black. The colour states are a layer drawn on top of it instead. */
+  video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  #flood { position: fixed; inset: 0; background: transparent; }
+  body[data-state=start] #flood, body[data-state=looking] #flood { background: #FFE600; }
+  body[data-state=listening] #flood { background: #FF3B30; }
+  body[data-state=answer] #flood { background: #fff; }
+  body[data-state=error] #flood { background: repeating-linear-gradient(-45deg, #FFE600 0 36px, #000 36px 72px); }
 
   button { all: unset; box-sizing: border-box; cursor: pointer; touch-action: none;
     -webkit-tap-highlight-color: transparent; }
@@ -82,7 +85,7 @@
   .squares span:nth-child(3) { animation-delay: .4s; }
   @keyframes blink { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
   /* A little motion: colour flood fades in, each new screen's blocks rise in one after another */
-  body, #repeat { transition: background-color .25s ease, color .25s ease; }
+  #flood, #repeat { transition: background-color .25s ease, color .25s ease; }
   #content > * { animation: rise .32s cubic-bezier(.2, .9, .3, 1.2) both; }
   #content > *:nth-child(2) { animation-delay: .06s; }
   #content > *:nth-child(3) { animation-delay: .12s; }
@@ -94,7 +97,7 @@
   #repeat:active { filter: brightness(.9); }
   @media (prefers-reduced-motion: reduce) {
     .bars span, .squares span, #content > *, .stack > * { animation: none; }
-    body, #repeat, #repeat svg { transition: none; }
+    #flood, #repeat, #repeat svg { transition: none; }
   }
 
   .label { font-size: 13px; font-weight: 900; letter-spacing: .15em; color: #FFE600; }
@@ -112,6 +115,7 @@
 </head>
 <body data-state="start">
 <video id="cam" playsinline muted aria-hidden="true"></video>
+<div id="flood" aria-hidden="true"></div>
 <button id="repeat">
   <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
     stroke-linecap="square" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 3v6h6"/></svg>
@@ -317,8 +321,8 @@ async function setup() {
   }
   try {
     stream = await navigator.mediaDevices.getUserMedia({
-      // Full HD if the phone can; it falls back to its best on its own
-      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: true });
+      // 1280 wide: asking for 1920x1080 made some phones pick a mode/lens with dark, blurry frames
+      video: { facingMode: 'environment', width: { ideal: 1280 } }, audio: true });
   } catch (e) {
     // NotAllowedError = user/browser blocked it; NotFound/NotReadable = no working camera or mic
     if (e.name === 'NotAllowedError') {

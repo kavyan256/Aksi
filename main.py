@@ -141,11 +141,15 @@ async def answer_question(image: UploadFile = File(...), question: str = Form(""
     if lang not in LANGUAGES:
         lang = FALLBACK_LANG
     timings = {}
+    photo = await image.read()
+    if os.getenv("DEBUG_PHOTOS"):  # set locally to see exactly what Gemma was shown
+        with open("last_photo.jpg", "wb") as f:
+            f.write(photo)
     if not question.strip():
         answer, lang = NOT_HEARD, FALLBACK_LANG
     else:
         t = time.perf_counter()
-        answer = await look(await image.read(), image.content_type or "image/jpeg", question, lang)
+        answer = await look(photo, image.content_type or "image/jpeg", question, lang)
         timings["look"] = round(time.perf_counter() - t, 2)
     t = time.perf_counter()
     audio_b64 = await speak(answer, lang)
