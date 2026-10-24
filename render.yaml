@@ -1,0 +1,12 @@
+# Render Blueprint: one free web service built from the Dockerfile.
+services:
+  - type: web
+    name: aksi
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    autoDeploy: true          # every push to main redeploys
+    envVars:
+      - key: SARVAM_API_KEY
+        sync: false           # Render asks for the value once; it is never stored in the repo
